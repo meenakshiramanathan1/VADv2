@@ -266,6 +266,7 @@ class VAD(MVXTwoStageDetector):
         gt_attr_labels=None,
         **kwargs
     ):
+        img = img[0]
         for var, name in [(img_metas, 'img_metas')]:
             if not isinstance(var, list):
                 raise TypeError('{} must be a list, but got {}'.format(
@@ -398,8 +399,8 @@ class VAD(MVXTwoStageDetector):
 
             bbox_result = c_bbox_results[0]
             gt_bbox = gt_bboxes_3d[0][0]
-            gt_label = gt_labels_3d[0][0].to('cpu')
-            gt_attr_label = gt_attr_labels[0][0].to('cpu')
+            gt_label = gt_labels_3d[0][0][0].to('cpu')
+            gt_attr_label = gt_attr_labels[0][0][0].to('cpu')
             fut_valid_flag = bool(fut_valid_flag[0][0])
             # filter pred bbox by score_threshold
             mask = bbox_result['scores_3d'] > score_threshold
@@ -427,7 +428,7 @@ class VAD(MVXTwoStageDetector):
 
             metric_dict_planner_stp3 = self.compute_planner_metric_stp3(
                 pred_ego_fut_trajs = ego_fut_pred[None],
-                gt_ego_fut_trajs = ego_fut_trajs[None],
+                gt_ego_fut_trajs = ego_fut_trajs[None][0],
                 gt_agent_boxes = gt_bbox,
                 gt_agent_feats = gt_attr_label.unsqueeze(0),
                 fut_valid_flag = fut_valid_flag
